@@ -72,6 +72,9 @@ def listar_ou_filtrar_jogos(
     # Busca e ordena pela nota de forma decrescente
     jogos = list(colecao_jogos.find(query).sort("nota", -1))
     
+    if not jogos:
+        raise HTTPException(status_code=404, detail="Nenhum jogo encontrado com os critérios fornecidos.")
+    
     return [serializar_jogo(j) for j in jogos]
 
 @app.patch("/api/jogos/{titulo}")
