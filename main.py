@@ -59,7 +59,6 @@ def listar_ou_filtrar_jogos(
     """
     query = {}
     
-    # Construção dinâmica da query baseada nos parâmetros recebidos
     if titulo:
         query["titulo"] = {"$regex": titulo, "$options": "i"}
     if genero:
@@ -69,7 +68,6 @@ def listar_ou_filtrar_jogos(
     if ano_minimo is not None:
         query["ano"] = {"$gte": ano_minimo}
 
-    # Busca e ordena pela nota de forma decrescente
     jogos = list(colecao_jogos.find(query).sort("nota", -1))
     
     if not jogos:
