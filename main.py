@@ -17,7 +17,7 @@ except Exception as e:
 
 app = FastAPI(
     title="Gerenciador de Jogos NoSQL",
-    description="API feita comFastAPI para gerenciar a coleção de jogos no MongoDB.",
+    description="API feita com FastAPI para gerenciar a coleção de jogos no MongoDB.",
     version="1.0.1"
 )
 
@@ -33,7 +33,6 @@ class JogoUpdate(BaseModel):
     nota: Optional[float] = None
 
 def serializar_jogo(jogo_db) -> dict:
-    """Converte o _id do MongoDB para string para que o FastAPI possa retornar em JSON."""
     if jogo_db:
         jogo_db["_id"] = str(jogo_db["_id"])
     return jogo_db
