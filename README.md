@@ -46,4 +46,11 @@ Foi escolhido JSON pela praticidade e por ser a mais difundida
  - uvicorn(servidor para rodar a API)
  - pydantic(para tipagem de dados)
 
+ ## Como rodar a API
+ - Criar um ambiente virtual(mais recomendado)
+ - Instalar as bibliotecas utilizadas(pip install pymongo uvicorn pydantic)
+ - Criar o banco de dados MongoDB
+ - Executar o comando uvicorn main:app --reload
+ - Acessar a documentação no localhost/docs
+
 

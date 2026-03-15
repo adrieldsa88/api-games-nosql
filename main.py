@@ -2,11 +2,13 @@ from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional, List
 from pymongo import MongoClient
-
-uri = "mongodb://localhost:27017/"
+import os
+from dotenv import load_dotenv 
+load_dotenv()
+url = os.getenv("DB_URL")
 
 try:
-    client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+    client = MongoClient(url, serverSelectionTimeoutMS=5000)
     db = client["projeto_banco_de_dados"]
     colecao_jogos = db["jogos"]
     client.admin.command('ping')
@@ -52,6 +54,7 @@ def listar_ou_filtrar_jogos(
     nota_minima: Optional[float] = Query(None, description="Filtrar por nota mínima"),
     ano_minimo: Optional[int] = Query(None, description="Filtrar por ano mínimo")
 ):
+    # sourcery skip: reintroduce-else, swap-if-else-branches, use-named-expression
     """
     (R) Listar Tudo e Filtros Combinados.
     Se nenhum parâmetro for passado, lista todos os jogos.
