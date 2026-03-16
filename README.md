@@ -48,9 +48,15 @@ Foi escolhido JSON pela praticidade e por ser a mais difundida
 
  ## Como rodar a API
  - Criar um ambiente virtual(mais recomendado)
- - Instalar as bibliotecas utilizadas(pip install pymongo uvicorn pydantic)
+ - Instalar as bibliotecas utilizadas
+```
+pip install requirements.txt
+```
  - Criar o banco de dados MongoDB
- - Executar o comando uvicorn main:app --reload
+ - Executar o comando 
+```
+uvicorn main:app --reload
+```
  - Acessar a documentação no localhost/docs
 
 
