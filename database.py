@@ -8,9 +8,12 @@ url = os.getenv("DB_URL")
 
 client = MongoClient(url, serverSelectionTimeoutMS=5000)
 
-db = client["projeto_banco_de_dados"]
+db = client["sistema_avaliacoes_jogos"]
 
+# Coleções
+colecao_usuarios = db["usuarios"]
 colecao_jogos = db["jogos"]
+colecao_avaliacoes = db["avaliacoes"]
 
 try:
     client.admin.command("ping")

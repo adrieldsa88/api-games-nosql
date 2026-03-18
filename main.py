@@ -1,10 +1,21 @@
 from fastapi import FastAPI
-from routes import router
+from fastapi.middleware.cors import CORSMiddleware
+from routes import router_usuarios, router_jogos, router_avaliacoes
 
 app = FastAPI(
-    title="Gerenciador de Jogos NoSQL",
-    description="API feita com FastAPI para gerenciar jogos no MongoDB",
-    version="1.0.1"
+    title="Sistema de Avaliação de Jogos",
+    description="API simples para avaliar jogos",
+    version="2.0.0"
 )
 
-app.include_router(router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(router_usuarios)
+app.include_router(router_jogos)
+app.include_router(router_avaliacoes)

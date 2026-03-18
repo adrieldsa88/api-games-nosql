@@ -1,62 +1,105 @@
-# API Projeto Banco de Dados II
+# Sistema de Avaliação de Jogos 🎮
 
-## Objetivo e Escolha
+API simples e rápida para gerenciar e avaliar jogos com MongoDB.
 
-### Objetivo
-Implementar uma API que realiza operações CRUD em um banco de dados não relacional 
-que gerencie uma coleção de jogos e permita fazer buscas e alterações
+## Características ✨
 
-### Justificativa
-Foi escolhido essa estrutura e lingaguem pela praticidade e também por serem tecnologias muito utilizadas no mercado de trabalho.
+- **Gerenciamento de Usuários**: Criar e listar usuários
+- **Gerenciamento de Jogos**: CRUD completo sem complicações
+- **Sistema de Avaliações**: Usuários podem avaliar jogos simplemente
+- **Cálculo Automático de Média**: Média de avaliações atualizada em tempo real
 
-## Funcionalidades
-- **CRUD Completo**: Inserção (Create), Listagem (Read), Atualização (Update) e Deleção (Delete).
-- **Filtros Dinâmicos**: Busca por título, gênero e filtros de nota mínima ou ano.
-- **Atualização Inteligente**: O endpoint de atualização altera apenas os campos enviados no JSON
-- **Validação Automática**: Garante que anos sejam inteiros e notas sejam números decimais.
+## Tecnologias Utilizadas 🛠️
 
-## Estrutura do Banco de Dados e Tecnologias Utilizadas
+- **FastAPI**: Framework web
+- **MongoDB**: Banco de dados NoSQL
+- **Python 3.x**
 
-### Tipo de Banco de Dados Utilizado
+## Instalação 📦
 
-O projeto utiliza **MongoDB**, que é um banco de dados **NoSQL orientado a documentos**.
-
-Nesse tipo de banco, os dados são armazenados em **documentos no formato JSON ou BSON**, organizados dentro de **coleções**. 
-No projeto foi utilizada a coleção **`jogos`**, responsável por armazenar as informações de cada jogo cadastrado no sistema.
-
-### Estrutura dos Dados
-
-Cada jogo é armazenado como um **documento JSON** dentro da coleção `jogos`.
-
-#### Exemplo de documento
-Foi escolhido JSON pela praticidade e por ser a mais difundida
-
-```json
-{
-  "titulo": "The Witcher 3",
-  "genero": "RPG",
-  "ano": 2015,
-  "nota": 9.8
-}
+### 1. Ambiente virtual
+```bash
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
-## Linguagem Utilizada
- Foi escolhida a linguagem Python, fazendo uso do framework FastAPI e das bibliotecas:
- - pymongo(para conectar-se ao banco MongoDB)
- - uvicorn(servidor para rodar a API)
- - pydantic(para tipagem de dados)
+### 2. Dependências
+```bash
+pip install -r requirements.txt
+```
 
- ## Como rodar a API
- - Criar um ambiente virtual(mais recomendado)
- - Instalar as bibliotecas utilizadas
+### 3. Configurar .env
+```env
+DB_URL=mongodb://localhost:27017
 ```
-pip install requirements.txt
-```
- - Criar o banco de dados MongoDB
- - Executar o comando 
-```
+
+## Como Executar 🚀
+
+```bash
 uvicorn main:app --reload
 ```
- - Acessar a documentação no localhost/docs
+
+- API: `http://localhost:8000`
+- Docs: `http://localhost:8000/docs`
+
+## Endpoints Principais 🔌
+
+### Usuários
+- `POST /api/usuarios/` - Criar usuário
+- `GET /api/usuarios/` - Listar usuários
+- `GET /api/usuarios/{email}` - Detalhes do usuário
+
+### Jogos
+- `POST /api/jogos/` - Criar jogo
+- `GET /api/jogos/` - Listar jogos
+- `GET /api/jogos/{titulo}` - Detalhes do jogo
+- `PATCH /api/jogos/{titulo}` - Atualizar
+- `DELETE /api/jogos/{titulo}` - Deletar
+
+### Avaliações
+- `POST /api/avaliacoes/` - Criar avaliação
+- `GET /api/avaliacoes/jogo/{titulo}` - Reviews do jogo
+- `GET /api/avaliacoes/usuario/{email}` - Reviews do usuário
+- `DELETE /api/avaliacoes/{id_avaliacao}` - Deletar avaliação
+
+## Exemplo de Uso 💡
+
+```bash
+# 1. Criar usuário
+curl -X POST http://localhost:8000/api/usuarios/ \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"João","email":"joao@ex.com"}'
+
+# 2. Criar jogo
+curl -X POST http://localhost:8000/api/jogos/ \
+  -H "Content-Type: application/json" \
+  -d '{"titulo":"Elden Ring","genero":"RPG"}'
+
+# 3. Avaliar jogo
+curl -X POST http://localhost:8000/api/avaliacoes/ \
+  -H "Content-Type: application/json" \
+  -d '{
+    "titulo_jogo":"Elden Ring",
+    "email_usuario":"joao@ex.com",
+    "nota":9.5,
+    "review":"Excelente!"
+  }'
+```
+
+## Popular Banco 📊
+
+```bash
+python populate_db.py
+```
+
+Cria 5 usuários, 7 jogos e 12 avaliações 
+
+## Validações ✅
+
+- Nota: 0-10
+- Email: Deve ser único por usuário
+- Titulo: Sem duplicatas
+
+
 
 
