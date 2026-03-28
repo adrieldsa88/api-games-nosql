@@ -13,9 +13,9 @@ def atualizar_media_jogo(titulo_jogo: str):
     """Recalcula a média de avaliações de um jogo."""
     
     avaliacoes = list(colecao_avaliacoes.find({"titulo_jogo": titulo_jogo}))
-    
+
     if avaliacoes:
-        media = sum([a["nota"] for a in avaliacoes]) / len(avaliacoes)
+        media = sum(a["nota"] for a in avaliacoes) / len(avaliacoes)
         colecao_jogos.update_one(
             {"titulo": titulo_jogo},
             {"$set": {
@@ -34,7 +34,7 @@ def atualizar_media_jogo(titulo_jogo: str):
 
 
 @router.post("/", status_code=201)
-def criar_avaliacao(avaliacao: Avaliacao):
+async def criar_avaliacao(avaliacao: Avaliacao):
     """(C) Criar uma nova avaliação de jogo."""
     
     # Validar se o jogo existe
@@ -44,14 +44,14 @@ def criar_avaliacao(avaliacao: Avaliacao):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Jogo '{avaliacao.titulo_jogo}' não encontrado"
         )
-    
+
     # Validar nota entre 0 e 10
     if avaliacao.nota < 0 or avaliacao.nota > 10:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="A nota deve estar entre 0 e 10"
         )
-    
+
     # Buscar usuário
     usuario = colecao_usuarios.find_one({"email": avaliacao.email_usuario})
     if not usuario:
@@ -59,7 +59,7 @@ def criar_avaliacao(avaliacao: Avaliacao):
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Usuário com email '{avaliacao.email_usuario}' não encontrado"
         )
-    
+
     nova_avaliacao = {
         "titulo_jogo": avaliacao.titulo_jogo,
         "nome_usuario": usuario["nome"],
@@ -68,20 +68,20 @@ def criar_avaliacao(avaliacao: Avaliacao):
         "review": avaliacao.review,
         "data_criacao": get_data_atual()
     }
-    
+
     resultado = colecao_avaliacoes.insert_one(nova_avaliacao)
-    
+
     # Atualizar média de avaliações do jogo
     atualizar_media_jogo(avaliacao.titulo_jogo)
-    
+
     return {
-        "mensagem": f"Avaliação criada com sucesso!",
-        "id": str(resultado.inserted_id)
+        "mensagem": "Avaliação criada com sucesso!",
+        "id": str(resultado.inserted_id),
     }
 
 
 @router.get("/jogo/{titulo_jogo}", response_model=List[dict])
-def listar_avaliacoes_jogo(titulo_jogo: str):
+async def listar_avaliacoes_jogo(titulo_jogo: str):
     """(R) Listar todas as avaliações de um jogo."""
     
     avaliacoes = list(colecao_avaliacoes.find({"titulo_jogo": titulo_jogo}).sort("data_criacao", -1))
@@ -96,7 +96,7 @@ def listar_avaliacoes_jogo(titulo_jogo: str):
 
 
 @router.get("/usuario/{email_usuario}", response_model=List[dict])
-def listar_avaliacoes_usuario(email_usuario: str):
+async def listar_avaliacoes_usuario(email_usuario: str):
     """(R) Listar todas as avaliações de um usuário."""
     
     avaliacoes = list(colecao_avaliacoes.find({"email_usuario": email_usuario}).sort("data_criacao", -1))
@@ -111,7 +111,7 @@ def listar_avaliacoes_usuario(email_usuario: str):
 
 
 @router.get("/{id_avaliacao}")
-def obter_avaliacao(id_avaliacao: str):
+async def obter_avaliacao(id_avaliacao: str):
     """(R) Obter uma avaliação específica."""
     
     try:
@@ -132,7 +132,7 @@ def obter_avaliacao(id_avaliacao: str):
 
 
 @router.delete("/{id_avaliacao}")
-def deletar_avaliacao(id_avaliacao: str):
+async def deletar_avaliacao(id_avaliacao: str):
     """(D) Deletar uma avaliação."""
     
     try:
