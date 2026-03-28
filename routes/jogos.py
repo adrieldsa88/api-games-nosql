@@ -9,7 +9,7 @@ router = APIRouter(prefix="/api/jogos", tags=["Jogos"])
 
 
 @router.post("/", status_code=201)
-def inserir_jogo(jogo: Jogo):
+async def inserir_jogo(jogo: Jogo):
     """(C) Inserir um novo jogo."""
     
     if colecao_jogos.find_one({"titulo": jogo.titulo}):
@@ -32,7 +32,7 @@ def inserir_jogo(jogo: Jogo):
 
 
 @router.get("/", response_model=List[dict])
-def listar_jogos(
+async def listar_jogos(
     titulo: Optional[str] = Query(None),
     genero: Optional[str] = Query(None),
     desenvolvedor: Optional[str] = Query(None),
@@ -63,7 +63,7 @@ def listar_jogos(
 
 
 @router.get("/{titulo}")
-def obter_jogo(titulo: str):
+async def obter_jogo(titulo: str):
     """(R) Obter detalhes de um jogo específico."""
     
     jogo = colecao_jogos.find_one({"titulo": titulo})
@@ -84,7 +84,7 @@ def obter_jogo(titulo: str):
 
 
 @router.patch("/{titulo}")
-def atualizar_jogo(titulo: str, jogo_update: JogoUpdate):
+async def atualizar_jogo(titulo: str, jogo_update: JogoUpdate):
     """(U) Atualizar dados de um jogo."""
     
     atualizacoes = jogo_update.model_dump(exclude_unset=True)
@@ -107,7 +107,7 @@ def atualizar_jogo(titulo: str, jogo_update: JogoUpdate):
 
 
 @router.delete("/{titulo}")
-def deletar_jogo(titulo: str):
+async def deletar_jogo(titulo: str):
     """(D) Deletar um jogo."""
     
     # Deletar também as avaliações do jogo

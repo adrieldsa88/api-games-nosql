@@ -4,6 +4,16 @@ from typing import Optional
 class Usuario(BaseModel):
     nome: str
     email: str
+    senha: str
+    
+class UsuarioLogin(BaseModel):
+    email: str
+    senha: str
+    
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    msg: Optional[str] = None
 
 class Jogo(BaseModel):
     titulo: str
@@ -13,7 +23,6 @@ class Jogo(BaseModel):
     data_lancamento: Optional[str] = None
 
 class JogoUpdate(BaseModel):
-    titulo: Optional[str] = None
     genero: Optional[str] = None
     desenvolvedor: Optional[str] = None
     plataforma: Optional[str] = None
