@@ -60,6 +60,12 @@ async def criar_avaliacao(avaliacao: Avaliacao, current_user: str = Depends(obte
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Usuário com email '{avaliacao.email_usuario}' não encontrado"
         )
+        
+    if colecao_avaliacoes.find_one({"titulo_jogo": avaliacao.titulo_jogo, "email_usuario": avaliacao.email_usuario}):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="O usuário já avaliou este jogo"
+        )
 
     nova_avaliacao = {
         "titulo_jogo": avaliacao.titulo_jogo,
