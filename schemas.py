@@ -15,6 +15,15 @@ class Token(BaseModel):
     token_type: str
     msg: Optional[str] = None
 
+class TokenResponse(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+    msg: Optional[str] = None
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
 class Jogo(BaseModel):
     titulo: str
     genero: Optional[str] = None

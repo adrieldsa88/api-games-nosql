@@ -11,6 +11,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", 7))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -37,3 +38,23 @@ def verificar_token_acesso(token: str):
         return email
     except JWTError as e:
         raise JWTError("Token inválido ou expirado") from e
+
+def criar_refresh_token(dados: dict):
+    """Cria um refresh token com expiração maior."""
+    crypted = dados.copy()
+    expiration = datetime.now(timezone.utc) + timedelta(
+        days=REFRESH_TOKEN_EXPIRE_DAYS
+    )
+    crypted["exp"] = expiration
+    return jwt.encode(crypted, SECRET_KEY, algorithm=ALGORITHM)
+
+def verificar_refresh_token(token: str):
+    """Verifica e extrai o email do refresh token."""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise JWTError("Refresh token inválido")
+        return email
+    except JWTError as e:
+        raise JWTError("Refresh token inválido ou expirado") from e
