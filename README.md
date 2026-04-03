@@ -1,53 +1,56 @@
-# Sistema de Avaliação de Jogos 🎮
+# 🎮 Sistema de Avaliação de Jogos
 
-API simples e rápida para gerenciar e avaliar jogos com MongoDB.
+API REST para gerenciar usuários, jogos e avaliações com autenticação JWT.
 
-## Características ✨
+## 🛠️ Tecnologias
 
-- **Gerenciamento de Usuários**: Criar e listar usuários
-- **Gerenciamento de Jogos**: CRUD completo sem complicações
-- **Sistema de Avaliações**: Usuários podem avaliar jogos simplemente
-- **Cálculo Automático de Média**: Média de avaliações atualizada em tempo real
+- FastAPI
+- MongoDB
+- PyJWT (Autenticação)
+- Passlib + Bcrypt
+- Pydantic
 
-## Tecnologias Utilizadas 🛠️
+## 📦 Instalação
 
-- **FastAPI**: Framework web
-- **MongoDB**: Banco de dados NoSQL
-- **Python 3.x**
-
-## Instalação 📦
-
-### 1. Ambiente virtual
 ```bash
 python -m venv venv
-.\venv\Scripts\Activate.ps1
-```
-
-### 2. Dependências
-```bash
+venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-### 3. Configurar .env
+Configure o arquivo `.env`:
 ```env
 DB_URL=mongodb://localhost:27017
+SECRET_KEY=sua_chave_secreta
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
 ```
 
-## Como Executar 🚀
+## ▶️ Executar
 
 ```bash
 uvicorn main:app --reload
 ```
 
-- API: `http://localhost:8000`
-- Docs: `http://localhost:8000/docs`
+API: `http://localhost:8000`  
+Docs: `http://localhost:8000/docs`
 
-## Endpoints Principais 🔌
+## 📚 Endpoints
 
-### Usuários
-- `POST /api/usuarios/` - Criar usuário
-- `GET /api/usuarios/` - Listar usuários
-- `GET /api/usuarios/{email}` - Detalhes do usuário
+- `POST /api/usuarios/` - Registrar
+- `POST /api/usuarios/login` - Fazer login
+- `POST /api/jogos/` - Criar jogo
+- `GET /api/jogos/` - Listar jogos
+- `POST /api/avaliacoes/` - Criar avaliação (⚠️ requer autenticação)
+- `GET /api/avaliacoes/jogo/{titulo}` - Listar avaliações
+
+## 🔐 Autenticação
+
+Para acessar rotas protegidas, envie o token no header:
+```
+Authorization: Bearer seu_token_aqui
+```
 
 ### Jogos
 - `POST /api/jogos/` - Criar jogo
