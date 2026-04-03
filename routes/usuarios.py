@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, status
 from typing import List
 from database import colecao_usuarios, colecao_avaliacoes
-from schemas import Usuario
+from schemas import Usuario, UsuarioLogin, TokenResponse, RefreshTokenRequest
 from utils import serializar_usuario, serializar_avaliacao, get_data_atual
-from auth import criar_token_acesso, verificar_token_acesso, hash_senha, verificar_senha
+from auth import criar_token_acesso, verificar_token_acesso, hash_senha, verificar_senha, criar_refresh_token, verificar_refresh_token
+from jose import JWTError
 
 
 router = APIRouter(prefix="/api/usuarios", tags=["Usuários"])
@@ -35,8 +36,8 @@ async def registrar_usuario(usuario: Usuario):
     }
     
 @router.post("/login", response_model=dict)
-async def login_usuario(usuario: Usuario):
-    """Autenticar usuário e gerar token de acesso."""
+async def login_usuario(usuario: UsuarioLogin):
+    """Autenticar usuário e gerar tokens de acesso e refresh."""
     
     usuario_db = colecao_usuarios.find_one({"email": usuario.email})
     
@@ -47,12 +48,31 @@ async def login_usuario(usuario: Usuario):
         )
     
     token_acesso = criar_token_acesso({"sub": usuario.email})
+    token_refresh = criar_refresh_token({"sub": usuario.email})
     
     return {
         "access_token": token_acesso,
+        "refresh_token": token_refresh,
         "token_type": "bearer",
         "msg": "Login bem-sucedido"
     }
+
+@router.post("/refresh", response_model=dict)
+async def renovar_token(request: RefreshTokenRequest):
+    """Renovar o access token usando um refresh token válido."""
+    try:
+        email = verificar_refresh_token(request.refresh_token)
+        novo_access_token = criar_token_acesso({"sub": email})
+
+        return {
+            "access_token": novo_access_token,
+            "token_type": "bearer",
+            "msg": "Token renovado com sucesso"
+        }
+    except JWTError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e)
+        ) from e
 
 
 @router.get("/", response_model=List[dict])
