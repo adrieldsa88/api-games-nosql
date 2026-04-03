@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from database import colecao_avaliacoes, colecao_jogos, colecao_usuarios
 from schemas import Avaliacao
 from utils import serializar_avaliacao, get_data_atual
 from bson import ObjectId
+from auth import obter_usuario_atual
 
 
 router = APIRouter(prefix="/api/avaliacoes", tags=["Avaliações"])
@@ -34,7 +35,7 @@ def atualizar_media_jogo(titulo_jogo: str):
 
 
 @router.post("/", status_code=201)
-async def criar_avaliacao(avaliacao: Avaliacao):
+async def criar_avaliacao(avaliacao: Avaliacao, current_user: str = Depends(obter_usuario_atual)):
     """(C) Criar uma nova avaliação de jogo."""
     
     # Validar se o jogo existe
@@ -81,7 +82,7 @@ async def criar_avaliacao(avaliacao: Avaliacao):
 
 
 @router.get("/jogo/{titulo_jogo}", response_model=List[dict])
-async def listar_avaliacoes_jogo(titulo_jogo: str):
+async def listar_avaliacoes_jogo(titulo_jogo: str, current_user: str = Depends(obter_usuario_atual)):
     """(R) Listar todas as avaliações de um jogo."""
     
     avaliacoes = list(colecao_avaliacoes.find({"titulo_jogo": titulo_jogo}).sort("data_criacao", -1))

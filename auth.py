@@ -58,3 +58,6 @@ def verificar_refresh_token(token: str):
         return email
     except JWTError as e:
         raise JWTError("Refresh token inválido ou expirado") from e
+    
+def obter_usuario_atual(token: str):
+    return verificar_token_acesso(token)
